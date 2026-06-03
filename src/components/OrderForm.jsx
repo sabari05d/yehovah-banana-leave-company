@@ -37,11 +37,14 @@ function validateItems(items) {
 
 // ------ Item Builder ------
 const LEAF_CATEGORIES = [
-  { value: 'tiffin', label: 'Tiffin Leaves', sub: 'Breakfast & Snacks' },
-  { value: 'lunch', label: 'Lunch Leaves', sub: 'Banquets & Weddings' },
   { value: 'chevvazhai', label: 'Red Banana (Chevvazhai)', sub: 'Specialty / Seasonal' },
   { value: 'nenthra', label: 'Nenthra Variety', sub: 'Kerala-Style Sadhu' },
   { value: 'poovan', label: 'Poovan Variety', sub: 'Everyday Staple' },
+]
+
+const LEAF_SIZES = [
+  { value: 'tiffin', label: 'Tiffen Leaf', sub: 'Breakfast & Snacks' },
+  { value: 'lunch', label: 'Lunch Leaf', sub: 'Banquets & Weddings' },
 ]
 
 const GRADES = [
@@ -52,7 +55,7 @@ const GRADES = [
 const UNITS = ['Bundles (100 pcs)', 'Pieces', 'Kilograms', 'Dozens']
 
 function newItem() {
-  return { id: Date.now(), category: 'tiffin', grade: 'premium', quantity: '', unit: 'Bundles (100 pcs)', notes: '' }
+  return { id: Date.now(), category: 'chevvazhai', size: 'tiffin', grade: 'premium', quantity: '', unit: 'Bundles (100 pcs)', notes: '' }
 }
 
 function ItemRow({ item, onChange, onRemove, showError }) {
@@ -84,6 +87,20 @@ function ItemRow({ item, onChange, onRemove, showError }) {
           >
             {LEAF_CATEGORIES.map(c => (
               <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+
+        {/* Leaf Size */}
+        <div>
+          <label className="block font-body text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">Leaf Size</label>
+          <select
+            value={item.size}
+            onChange={e => onChange({ ...item, size: e.target.value })}
+            className="w-full bg-white border border-forest-200 text-forest-800 font-body text-sm rounded-xl px-3 py-2.5 focus:outline-none focus:border-leaf-500 focus:ring-2 focus:ring-leaf-200 transition"
+          >
+            {LEAF_SIZES.map(s => (
+              <option key={s.value} value={s.value}>{s.label}</option>
             ))}
           </select>
         </div>
@@ -178,7 +195,6 @@ function FadeIn({ children, delay = 0, className = '' }) {
 }
 
 // ------ MAIN FORM ------
-// const WEBHOOK_URL = 'https://script.google.com/macros/s/YOUR_GOOGLE_APPS_SCRIPT_ID/exec'
 const WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbyne91WURCdiFDzhcq28Otomi6mO19XA_jcLsgnpCbYgV1En5ywoa2FIfrtFmb75xkj/exec';
 
 export default function OrderForm({ onSuccess }) {
@@ -236,6 +252,7 @@ export default function OrderForm({ onSuccess }) {
       additionalNotes: step2.additionalNotes || 'None',
       orderItems: items.map(it => ({
         category: LEAF_CATEGORIES.find(c => c.value === it.category)?.label,
+        size: LEAF_SIZES.find(s => s.value === it.size)?.label,   // ← ADD THIS
         grade: GRADES.find(g => g.value === it.grade)?.label,
         quantity: it.quantity,
         unit: it.unit,
